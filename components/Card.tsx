@@ -1,6 +1,16 @@
-import { type ViewProps } from "react-native";
+import { Shadow } from "@/constants/Shadow";
+import { UseThemeColor } from "@/Hooks/UseThemeColor";
+import { ViewStyle, type ViewProps,View } from "react-native";
 
 type Props =ViewProps
-export function Card({}:Props){
 
+
+export function Card({style,...rest}:Props){
+    const colors=UseThemeColor()
+        return <View style={[style,styles,{backgroundColor:colors.grayWhite}]} {...rest}/>
 }
+
+const styles={
+    borderRadius:8,
+    ...Shadow.dp2
+} satisfies ViewStyle

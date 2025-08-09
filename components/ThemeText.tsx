@@ -39,11 +39,12 @@ type Props=TextProps & {
     color?:keyof typeof Colors["light"],
 }
 
-export function ThemeText({variant,color,...rest}:Props) {
+export function ThemeText({variant,color,style,...rest}:Props) {
     const colors=UseThemeColor()
     return <Text style={
         [styles[variant ?? 'body3'],
-        {color: colors[color ?? "grayDark"]}
+        {color: colors[color ?? "grayDark"]},
+        style
         ]
     }{...rest}
     />
