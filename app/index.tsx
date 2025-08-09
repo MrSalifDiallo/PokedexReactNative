@@ -1,27 +1,18 @@
+import { Card } from "@/components/Card";
+import { ThemeText } from "@/components/ThemeText";
+import { UseThemeColor } from "@/Hooks/UseThemeColor";
 import { Link } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
+  const colors=UseThemeColor()
   return (
-    <SafeAreaView
-    style={styles.container}
-      /*style={{
-        backgroundColor: "gray",
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}*/
-    >
-      <Text>C'est Salif Diallo</Text>
-        <Link href="/about">About Page</Link>
-        <Link 
-          href={{
-            pathname:"/pokemon/[id]",
-            params:{id:3},
-          }}>
-           Pokemon 3
-        </Link>
+    <SafeAreaView style={[styles.container, {backgroundColor:colors.tint} ]}>
+      <Card>
+          <ThemeText variant="headline" color={"grayDark"}>Pokédex</ThemeText>
+      </Card>
+        <ThemeText variant="headline" color={"grayWhite"}>Pokédex</ThemeText>
     </SafeAreaView>
   );
 }
@@ -30,22 +21,18 @@ export default function Index() {
 const styles = {
   container: {
     flex: 1,
-    justifyContent: "center" as const,
-    alignItems: "center" as const,
-    backgroundColor: "yellow",
+    //justifyContent: "center" as const,
+    //alignItems: "center" as const,
   }
 }
 
-const styles2 = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "yellow",
-  },
 
-});
-
+/*style={{
+        backgroundColor: "gray",
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}*/
 // Uncomment the following line if you want to use StyleSheetList
 // import { StyleSheetList } from "react-native";
 
