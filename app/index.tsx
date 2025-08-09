@@ -1,11 +1,15 @@
 import { Card } from "@/components/Card";
 import { PokemonCard } from "@/components/pokemon/PokemonCard";
+import { Row } from "@/components/Row";
+import { SearchBar } from "@/components/SearchBar";
 import { ThemeText } from "@/components/ThemeText";
 import { getPokemonId } from "@/functions/pokemon";
 import { UseFetchQuery, UseInfiniteFetchQuery } from "@/Hooks/UseFetchQuery";
 import { UseThemeColor } from "@/Hooks/UseThemeColor";
+import { use, useState } from "react";
 import { ActivityIndicator, FlatList, Image, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 export default function Index() {
   const colors=UseThemeColor()
@@ -18,17 +22,27 @@ export default function Index() {
   //On utilise la fonction getNextPageParam pour charger la page suivante
   const {data,isFetching,fetchNextPage}=UseInfiniteFetchQuery("/pokemon?limit=21");
    const pokemons=data?.pages.flatMap(page=>page.results) ?? [];
-  const height=200;
+  const [search,setSearch]=useState('');
+
+  // Filtrer les pokémons en fonction de la recherche
+   const filteredPokemons = search ? pokemons.filter(pokemon =>
+    pokemon.name.toLowerCase().includes(search.toLowerCase()
+  ) || getPokemonId(pokemon.url).toString().includes(search)): pokemons;
   return (
     <SafeAreaView style={[styles.container, {backgroundColor:colors.tint} ]}>
-      <View style={styles.header}>
-        {/* <Image source={require("@/assets/images/pokeball.pn")}></Image> */}
+      <Row 
+          gap={16}
+          style={styles.header}
+        >
         <Image source={require("@/assets/images/pokeball.png")} width={24} height={24}></Image>
         <ThemeText variant="headline" color={"grayLight"} >Pokédex</ThemeText>
-      </View>
+      </Row>
+      <Row>
+        <SearchBar valeur={search} onChange={setSearch}></SearchBar>
+      </Row>
       <Card style={styles.body} >
         <FlatList 
-        data={pokemons}
+        data={filteredPokemons}
         numColumns={3}
         keyExtractor={(item) => item.url}
         contentContainerStyle={[styles.list,styles.gridGap]}
@@ -65,20 +79,19 @@ const styles = {
     //alignItems: "center" as const,
   },
   header:{
-    flexDirection: "row" as const,
-    alignItems: "center" as const,
-    gap:16,
-    padding:12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   body:{
     flex: 1,
+    marginTop: 16,
   },
   list:{
     padding:12,
   },
   gridGap:{
     gap: 8,
-  }
+  },
 }
 
 
