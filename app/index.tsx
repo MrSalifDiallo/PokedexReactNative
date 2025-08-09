@@ -1,19 +1,23 @@
 import { Card } from "@/components/Card";
 import { PokemonCard } from "@/components/pokemon/PokemonCard";
 import { ThemeText } from "@/components/ThemeText";
+import { getPokemonId } from "@/functions/pokemon";
+import { UseFetchQuery, UseInfiniteFetchQuery } from "@/Hooks/UseFetchQuery";
 import { UseThemeColor } from "@/Hooks/UseThemeColor";
-import { ViewStyle, ViewProps } from "react-native";
-import { Link } from "expo-router";
-import { StyleSheet, Text, View,Image, FlatList } from "react-native";
+import { ActivityIndicator, FlatList, Image, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const colors=UseThemeColor()
-  const pokemons=Array.from({length: 35}, (_, i) => ({
-    id: i + 1,
-    name: `Pokemon ${i + 1}`,
-    //image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${i + 1}.png`
-  }));
+  //Api pas les id
+  //const {data,isFetching}=UseFetchQuery("/pokemon?limit=45")
+  //const pokemons=data?.results ?? [];
+
+  //Utilisation de UseInfiniteFetchQuery pour charger les pokémons
+  //On utilise une page de 20 pokémons
+  //On utilise la fonction getNextPageParam pour charger la page suivante
+  const {data,isFetching,fetchNextPage}=UseInfiniteFetchQuery("/pokemon?limit=200")
+  const pokemons=data?.pages.flatMap(page=>page.results) ?? [];
   const height=200;
   return (
     <SafeAreaView style={[styles.container, {backgroundColor:colors.tint} ]}>
@@ -26,12 +30,18 @@ export default function Index() {
         <FlatList 
         data={pokemons}
         numColumns={3}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.url}
         contentContainerStyle={[styles.list,styles.gridGap]}
         columnWrapperStyle={[styles.gridGap]}
+        //Component en fin liste pour afficher un indicateur de chargement
+        ListFooterComponent={
+          isFetching ? <ActivityIndicator size="large" color={colors.tint} /> : null
+        }
+        //Lorsque l'on arrive en bas de la liste, on charge la page suivante
+        onEndReached={() => {fetchNextPage()}}
         renderItem={({item}) => (
           <PokemonCard 
-          id={item.id} 
+          id={getPokemonId(item.url)} 
           name={item.name} 
           style={{flex:1/3}}
           >
