@@ -2,7 +2,21 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { use } from "react";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 const endpoint="https://pokeapi.co/api/v2/";
-export function UseFetchQuery(url: string) {
+
+type API={
+    '/pokemon?limit=21': {
+        count: number;
+        next: string | null;
+        previous: string | null;
+        results: {
+            name: string;
+            url: string;
+        }[];
+    };
+    // Add more endpoints as needed
+
+}
+export function UseFetchQuery<T extends keyof API>(url:T) {
     /*const [data, setData] = React.useState<T | null>(null);
     const [error, setError] = React.useState<Error | null>(null);
     const [loading, setLoading] = React.useState<boolean>(true);    */
@@ -11,13 +25,14 @@ export function UseFetchQuery(url: string) {
         queryFn: async () => {
             wait(1); // Simulate a delay
             // Fetch data from the API 
-            return fetch(endpoint + url)
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
+            return fetch(endpoint + url
+                ,{
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                }   
+            ).then((r=>r.json() as Promise<API[T]>))
         },
         refetchOnWindowFocus: false,
         retry: 1,
@@ -25,7 +40,7 @@ export function UseFetchQuery(url: string) {
     });
 }
 
-export function UseInfiniteFetchQuery(url: string) {
+export function UseInfiniteFetchQuery<T extends keyof API>(url:T) {
     return useInfiniteQuery({
         queryKey: [url],
         initialPageParam: endpoint+url,
@@ -41,11 +56,11 @@ export function UseInfiniteFetchQuery(url: string) {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    return response.json();
+                    return response.json() as Promise<API[T]>;
                 }
             );
         },
-        getNextPageParam: (lastPage, allPages) => {
+        getNextPageParam: (lastPage) => {
             // Assuming the API returns a next page URL or null
             return lastPage.next ? lastPage.next : null;
         },

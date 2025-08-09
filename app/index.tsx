@@ -16,8 +16,8 @@ export default function Index() {
   //Utilisation de UseInfiniteFetchQuery pour charger les pokémons
   //On utilise une page de 20 pokémons
   //On utilise la fonction getNextPageParam pour charger la page suivante
-  const {data,isFetching,fetchNextPage}=UseInfiniteFetchQuery("/pokemon?limit=200")
-  const pokemons=data?.pages.flatMap(page=>page.results) ?? [];
+  const {data,isFetching,fetchNextPage}=UseInfiniteFetchQuery("/pokemon?limit=21");
+   const pokemons=data?.pages.flatMap(page=>page.results) ?? [];
   const height=200;
   return (
     <SafeAreaView style={[styles.container, {backgroundColor:colors.tint} ]}>
