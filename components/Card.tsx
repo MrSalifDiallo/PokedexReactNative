@@ -12,5 +12,6 @@ export function Card({style,...rest}:Props){
 
 const styles={
     borderRadius:8,
+    overflow: "hidden" as const,
     ...Shadow.dp2
 } satisfies ViewStyle
