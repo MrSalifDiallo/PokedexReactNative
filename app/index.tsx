@@ -6,10 +6,11 @@ import { ThemeText } from "@/components/ThemeText";
 import { getPokemonId } from "@/functions/pokemon";
 import { UseFetchQuery, UseInfiniteFetchQuery } from "@/Hooks/UseFetchQuery";
 import { UseThemeColor } from "@/Hooks/UseThemeColor";
-import { use, useState } from "react";
+import React, { use, useState } from "react";
 import { ActivityIndicator, FlatList, Image, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+
+import { SortButton } from "@/components/SortButton";
 
 export default function Index() {
   const colors=UseThemeColor()
@@ -21,13 +22,20 @@ export default function Index() {
   //On utilise une page de 20 pokémons
   //On utilise la fonction getNextPageParam pour charger la page suivante
   const {data,isFetching,fetchNextPage}=UseInfiniteFetchQuery("/pokemon?limit=21");
-   const pokemons=data?.pages.flatMap(page=>page.results) ?? [];
+  const pokemons=data?.pages.flatMap(page=>page.results.map(
+    r=>({name:r.name,id:getPokemonId(r.url),url:r.url})
+  )) ?? [];
   const [search,setSearch]=useState('');
+//
 
+const [sortKey,setSortKey]=useState<"id"|"name">("id");
   // Filtrer les pokémons en fonction de la recherche
-   const filteredPokemons = search ? pokemons.filter(pokemon =>
+   const filteredPokemons = [
+    ...(search ? 
+    pokemons.filter(pokemon =>
     pokemon.name.toLowerCase().includes(search.toLowerCase()
-  ) || getPokemonId(pokemon.url).toString().includes(search)): pokemons;
+  ) || pokemon.id.toString().includes(search)): pokemons
+   )].sort((a,b)=>(a[sortKey]<b[sortKey] ? -1 :1 ))
   return (
     <SafeAreaView style={[styles.container, {backgroundColor:colors.tint} ]}>
       <Row 
@@ -37,14 +45,15 @@ export default function Index() {
         <Image source={require("@/assets/images/pokeball.png")} width={24} height={24}></Image>
         <ThemeText variant="headline" color={"grayLight"} >Pokédex</ThemeText>
       </Row>
-      <Row>
+      <Row gap={16} style={styles.form}>
         <SearchBar valeur={search} onChange={setSearch}></SearchBar>
+        <SortButton value={sortKey} onChange={setSortKey}></SortButton>
       </Row>
       <Card style={styles.body} >
         <FlatList 
         data={filteredPokemons}
         numColumns={3}
-        keyExtractor={(item) => item.url}
+        keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={[styles.list,styles.gridGap]}
         columnWrapperStyle={[styles.gridGap]}
         //Component en fin liste pour afficher un indicateur de chargement
@@ -52,10 +61,10 @@ export default function Index() {
           isFetching ? <ActivityIndicator size="large" color={colors.tint} /> : null
         }
         //Lorsque l'on arrive en bas de la liste, on charge la page suivante
-        onEndReached={() => {fetchNextPage()}}
+        onEndReached={search ? undefined :() => {fetchNextPage()}}
         renderItem={({item}) => (
           <PokemonCard 
-          id={getPokemonId(item.url)} 
+          id={item.id} 
           name={item.name} 
           style={{flex:1/3}}
           >
@@ -92,6 +101,9 @@ const styles = {
   gridGap:{
     gap: 8,
   },
+  form:{
+    padding: 16,
+  }
 }
 
 

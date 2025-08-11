@@ -31,16 +31,14 @@ const styles=StyleSheet.create({
     wrapper:{
         flex:1,
         borderRadius: 16,
-        height: 40,
+        height: 32,
         paddingHorizontal: 12,
-        alignItems: 'center',
     },
     input:{
         flex:1,
-        height: '100%',
+        height: 32,
         fontSize: 14,   
         lineHeight: 20,
         paddingVertical: 0,
-        color: '#333333', // Couleur de secours pour garantir la visibilité
     }
 })
