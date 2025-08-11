@@ -62,10 +62,10 @@ export function SortButton({value,onChange}: Props) {
         </View>
     </Pressable>
     <Modal 
+      animationType="fade"
       transparent 
       visible={isModalVisible} 
       onRequestClose={() => setIsModalVisible(false)}
-      animationType="fade"
     >
       <Pressable style={styles.backdrop} onPress={onClose}></Pressable>
       <View style={[styles.popup,{backgroundColor:colors.tint,...position}]}>

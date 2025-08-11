@@ -11,6 +11,7 @@ import { ActivityIndicator, FlatList, Image, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { SortButton } from "@/components/SortButton";
+import { RootView } from "@/components/RootView";
 
 export default function Index() {
   const colors=UseThemeColor()
@@ -29,15 +30,19 @@ export default function Index() {
 //
 
 const [sortKey,setSortKey]=useState<"id"|"name">("id");
+const cleanSearch = search.trim().toLowerCase();
+
   // Filtrer les pokémons en fonction de la recherche
    const filteredPokemons = [
-    ...(search ? 
+    ...(cleanSearch ? 
     pokemons.filter(pokemon =>
-    pokemon.name.toLowerCase().includes(search.toLowerCase()
-  ) || pokemon.id.toString().includes(search)): pokemons
+    pokemon.name.toLowerCase().includes(cleanSearch) 
+    || 
+    pokemon.id.toString().includes(cleanSearch)
+      ): pokemons
    )].sort((a,b)=>(a[sortKey]<b[sortKey] ? -1 :1 ))
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor:colors.tint} ]}>
+    <RootView style={{backgroundColor:colors.tint}}>
       <Row 
           gap={16}
           style={styles.header}
@@ -75,18 +80,19 @@ const [sortKey,setSortKey]=useState<"id"|"name">("id");
         //showsVerticalScrollIndicator={false}
         />  
       </Card>
-    </SafeAreaView>
+    </RootView>
   );
 }
 
 
 const styles = {
-  container: {
+  //Implementer dans RootView.tsx
+  /*container: {
     flex: 1,
     padding:4
     //justifyContent: "center" as const,
     //alignItems: "center" as const,
-  },
+  },*/
   header:{
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -102,7 +108,7 @@ const styles = {
     gap: 8,
   },
   form:{
-    padding: 16,
+    paddingHorizontal: 12,
   }
 }
 

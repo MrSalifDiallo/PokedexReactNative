@@ -1,8 +1,6 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { use } from "react";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { Colors } from '@/constants/Colors';
 const endpoint="https://pokeapi.co/api/v2/";
-
 type API={
     '/pokemon?limit=21': {
         count: number;
@@ -14,18 +12,53 @@ type API={
         }[];
     };
     // Add more endpoints as needed
+    '/pokemon/[id]':{
+        height: number,
+        id:number,
+        name:string,
+        weight:number,
+        moves:{
+            move:{name:string}
+        }[],
+        stats:{
+            base_stat:number;
+            stat:{
+                name:string;
+            };
+        }[]; 
+        cries:{
+            latest:string;
+        };
+        types:{
+            type:{
+                name:keyof typeof Colors["type"] ;
+            },
+        }[];
+    };
 
+    '/pokemon-species/[id]':{
+       flavor_text_entries:{
+        flavor_text:string,
+        language:{
+            name:string
+        };
+       }[];
+    };
 }
-export function UseFetchQuery<T extends keyof API>(url:T) {
+export function UseFetchQuery<T extends keyof API>(url:T,params ?:Record<string,string|number>) {
     /*const [data, setData] = React.useState<T | null>(null);
     const [error, setError] = React.useState<Error | null>(null);
     const [loading, setLoading] = React.useState<boolean>(true);    */
+    const localUrl =endpoint + Object.entries(params ?? {}).reduce<string>(
+        (acc, [key, value]) => acc.replaceAll(`[${key}]`, String(value)),
+        url
+    );
     return useQuery({
-        queryKey: [url],
+        queryKey: [localUrl],
         queryFn: async () => {
             wait(1); // Simulate a delay
             // Fetch data from the API 
-            return fetch(endpoint + url
+            return fetch(localUrl
                 ,{
                     headers: {
                         'Content-Type': 'application/json',
@@ -61,8 +94,8 @@ export function UseInfiniteFetchQuery<T extends keyof API>(url:T) {
             );
         },
         getNextPageParam: (lastPage) => {
-            // Assuming the API returns a next page URL or null
-            return lastPage.next ? lastPage.next : null;
+            // Type guard to check if lastPage has 'next' property
+            return 'next' in lastPage ? lastPage.next : null;
         },
         refetchOnWindowFocus: false,
         retry: 1,

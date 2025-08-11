@@ -3,6 +3,7 @@ import { Link } from "expo-router"
 import { Image, Pressable, StyleSheet, View, ViewStyle } from "react-native"
 import { Card } from "../Card"
 import { ThemeText } from "../ThemeText"
+import { getPokemonArtWork } from "@/functions/pokemon"
 
 
 type Props = {
@@ -23,11 +24,11 @@ export function PokemonCard({style,id,name,...rest}:Props){
                     #{String(id).padStart(3,'0')}
                     </ThemeText>    
                     <Image 
-                        source={{uri:`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}}
+                        source={{uri:getPokemonArtWork(id)}}
                         height={120}
                         width={120}
                     />
-                    <ThemeText>{name}</ThemeText>   
+                    <ThemeText style={{textTransform:"capitalize"}}>{name}</ThemeText>   
                 </Card>
             </Pressable>
         </Link>
