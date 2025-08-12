@@ -6,11 +6,12 @@ import { UseThemeColor } from "@/Hooks/UseThemeColor";
 import { router, useLocalSearchParams } from "expo-router";
 import { View,Text,StyleSheet,Image, Pressable } from "react-native";
 import { Colors } from "@/constants/Colors";
-import { formatSize, formatWeight, getPokemonArtWork } from "@/functions/pokemon";
+import { basePokemonStat, formatSize, formatWeight, getPokemonArtWork } from "@/functions/pokemon";
 import { Card } from "@/components/Card";
 import { PokemonType } from "@/components/pokemon/PokemonType";
 import { PokemonSpec } from "@/components/pokemon/PokemonSpec";
 import { PokemonStat } from "@/components/pokemon/PokemonStat";
+import Animated, { useSharedValue, withSpring } from "react-native-reanimated";
 export default function PokemonPage() {
     // This is a placeholder for the Pokemon page
   const colors=UseThemeColor()
@@ -24,27 +25,43 @@ export default function PokemonPage() {
   const bio=species?.flavor_text_entries
   ?.find(({language})=> language.name==="en")
   ?.flavor_text.replaceAll("\n",",")
+  const defaultStat= pokemon?.stats ?? basePokemonStat
+  const top=useSharedValue(0)
   return (
-    <RootView style={{backgroundColor:colorType}} >
+    <RootView backgroundColor={colorType} >
       <View>
-      <Image style={styles.pokeball}
-      source={require('@/assets/images/arcpokeball.png')}
-      />
-      <Row style={styles.header} >
-        <Pressable onPress={router.back} >
-          <Row>
-              <Image
-              source={require("@/assets/images/arrow_back_white.png")}
-              width={32} height={32}
-              />
-              <ThemeText style={{textTransform:"capitalize"}} variant="headline" color="grayWhite" >{pokemon?.name}</ThemeText >
-          </Row>
-        </Pressable>       
-        <ThemeText variant="subtitle2" color="grayWhite" >#{params.id.padStart(3,'0')}</ThemeText >
-      </Row>  
+        <Image style={styles.pokeball}
+        source={require('@/assets/images/arcpokeball.png')}
+        />
+        <Row style={styles.header} >
+          <Pressable onPress={router.back} >
+            <Row>
+                <Image
+                source={require("@/assets/images/arrow_back_white.png")}
+                width={32} height={32}
+                />
+                <ThemeText style={{textTransform:"capitalize"}} variant="headline" color="grayWhite" >{pokemon?.name}</ThemeText >
+            </Row>
+          </Pressable>  
+          {/* <Pressable onPress={()=>{top.value=-144}}>
+              <ThemeText variant="subtitle2" color="grayWhite" >#{params.id.padStart(3,'0')}</ThemeText >
+            </Pressable>      */}
+            {/* <Pressable onPress={()=>{top.value=withSpring(-144)}}>
+              <ThemeText variant="subtitle2" color="grayWhite" >#{params.id.padStart(3,'0')}</ThemeText >
+            </Pressable>   */}
+            <ThemeText variant="subtitle2" color="grayWhite" >#{params.id.padStart(3,'0')}</ThemeText >
+        </Row>  
       </View>
       <View style={styles.body} >
-         <Image style={styles.artwork}
+         {/* <Animated.Image style={{
+                ...styles.artwork,
+                top:top  }    
+              }
+              source={{uri:getPokemonArtWork(params.id)}}
+              height={200}
+              width={200}
+          /> */}
+          <Image style={styles.artwork}
               source={{uri:getPokemonArtWork(params.id)}}
               height={200}
               width={200}
@@ -94,7 +111,7 @@ export default function PokemonPage() {
               </ThemeText>
 
               <View style={{alignSelf:"stretch"}} >
-                {pokemon?.stats.map(stat=>
+                {defaultStat.map(stat=>
                    <PokemonStat name={stat.stat.name} key={stat.stat.name} value={stat.base_stat}color={colorType}
                    />
                 )}

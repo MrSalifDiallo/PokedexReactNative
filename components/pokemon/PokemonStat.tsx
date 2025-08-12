@@ -3,6 +3,8 @@ import { Row } from "../Row";
 import { StyleSheet, View, ViewProps } from "react-native";
 import { ThemeText } from "../ThemeText";
 import { UseThemeColor } from "@/Hooks/UseThemeColor";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import { useEffect } from "react";
 type Props=ViewProps &{
     color:string;
     value:number;
@@ -21,6 +23,23 @@ function statShortName(name:string):string{
 
 export function PokemonStat({style,color,value,name,...rest}:Props){
     const colors=UseThemeColor()
+    const sharedValue=useSharedValue(value)
+    const barreInnerStyle=useAnimatedStyle(()=>{
+        return {
+            flex:sharedValue.value
+        }
+    })
+
+    const barreBackgroundStyle=useAnimatedStyle(()=>{
+        return {
+            flex:255-sharedValue.value
+        }
+    })
+
+    //Evoluer la valeur
+    useEffect(()=>{
+        sharedValue.value=withSpring(value);
+    },[value])
         return (
                 <Row gap={8} style={[style,styles.root]} {...rest}>
                     <View style={[styles.name,{borderColor:colors.grayLight}]} >
@@ -34,8 +53,8 @@ export function PokemonStat({style,color,value,name,...rest}:Props){
                         </ThemeText>
                     </View>
                     <Row style={[styles.bar]} >
-                        <View style={[styles.barInner,{flex:value,backgroundColor:color}]} />   
-                        <View style={[styles.barBackground,{flex:255-value,backgroundColor:color}]} />     
+                        <Animated.View style={[styles.barInner,{backgroundColor:color},barreInnerStyle]} />   
+                        <Animated.View style={[styles.barBackground,{backgroundColor:color},barreBackgroundStyle]} />     
                     </Row>
                 </Row>
         )

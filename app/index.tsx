@@ -20,7 +20,7 @@ export default function Index() {
   //const pokemons=data?.results ?? [];
 
   //Utilisation de UseInfiniteFetchQuery pour charger les pokémons
-  //On utilise une page de 20 pokémons
+  //On utilise une page de 21 pokémons
   //On utilise la fonction getNextPageParam pour charger la page suivante
   const {data,isFetching,fetchNextPage}=UseInfiniteFetchQuery("/pokemon?limit=21");
   const pokemons=data?.pages.flatMap(page=>page.results.map(
