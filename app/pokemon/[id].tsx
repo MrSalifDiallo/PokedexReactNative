@@ -11,7 +11,8 @@ import { Card } from "@/components/Card";
 import { PokemonType } from "@/components/pokemon/PokemonType";
 import { PokemonSpec } from "@/components/pokemon/PokemonSpec";
 import { PokemonStat } from "@/components/pokemon/PokemonStat";
-import Animated, { useSharedValue, withSpring } from "react-native-reanimated";
+import { useSharedValue} from "react-native-reanimated";
+import {Audio} from 'expo-av'
 export default function PokemonPage() {
     // This is a placeholder for the Pokemon page
   const colors=UseThemeColor()
@@ -27,6 +28,16 @@ export default function PokemonPage() {
   ?.flavor_text.replaceAll("\n",",")
   const defaultStat= pokemon?.stats ?? basePokemonStat
   const top=useSharedValue(0)
+  const onImagePress=async ()=>{
+    const cry=pokemon?.cries.latest
+    if (!cry) {
+      return;
+    }
+    const {sound}= await Audio.Sound.createAsync({
+      uri:cry
+    },{shouldPlay:true })//Precharger le son
+    sound.playAsync()
+  }
   return (
     <RootView backgroundColor={colorType} >
       <View>
@@ -61,11 +72,18 @@ export default function PokemonPage() {
               height={200}
               width={200}
           /> */}
-          <Image style={styles.artwork}
-              source={{uri:getPokemonArtWork(params.id)}}
-              height={200}
-              width={200}
-          />
+          <Row style={[styles.imageRow]}>
+            <Pressable onPress={onImagePress}>
+
+              <Image style={styles.artwork}
+                source={{uri:getPokemonArtWork(params.id)}}
+                height={200}
+                width={200}
+              />
+            </Pressable>
+
+          </Row>
+          
           <Card style={styles.card}>
               <Row gap={16}>
                 {types.map(
@@ -142,11 +160,13 @@ const styles=StyleSheet.create({
       right:8,
       top:8,
     },
+    imageRow:{
+      position:'absolute',
+      top:-144,
+      zIndex:2
+    },
     artwork:{
       alignSelf:"center" as const,
-      top:-144,
-      position:'absolute',
-      zIndex:2
     },
     card:{
       paddingHorizontal:20,
