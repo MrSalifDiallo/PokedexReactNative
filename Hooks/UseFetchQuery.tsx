@@ -2,15 +2,16 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { Colors } from '@/constants/Colors';
 const endpoint="https://pokeapi.co/api/v2/";
 type API={
-    '/pokemon?limit=21': {
+    '/pokemon': {
         count: number;
         next: string | null;
         previous: string | null;
         results: {
             name: string;
             url: string;
-        }[];
+        }[];    
     };
+
     // Add more endpoints as needed
     '/pokemon/[id]':{
         height: number,
@@ -56,7 +57,7 @@ export function UseFetchQuery<T extends keyof API>(url:T,params ?:Record<string,
     return useQuery({
         queryKey: [localUrl],
         queryFn: async () => {
-            wait(1); // Simulate a delay
+            //wait(1); // Simulate a delay
             // Fetch data from the API 
             return fetch(localUrl
                 ,{
@@ -73,12 +74,14 @@ export function UseFetchQuery<T extends keyof API>(url:T,params ?:Record<string,
     });
 }
 
-export function UseInfiniteFetchQuery<T extends keyof API>(url:T) {
+export function UseInfiniteFetchQuery<T extends keyof API>(url:T,
+  limit?: number) {
+    const fullUrl = limit ? `${url}?limit=${limit}` : url;
     return useInfiniteQuery({
-        queryKey: [url],
-        initialPageParam: endpoint+url,
+        queryKey: [fullUrl],
+        initialPageParam: endpoint+fullUrl,
         queryFn: async ({ pageParam}) => {
-            wait(1); // Simulate a delay
+            //wait(1); // Simulate a delay
             // Fetch data from the API 
             return fetch(pageParam,{
                     headers: {

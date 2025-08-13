@@ -7,7 +7,7 @@ import { getPokemonId } from "@/functions/pokemon";
 import { UseFetchQuery, UseInfiniteFetchQuery } from "@/Hooks/UseFetchQuery";
 import { UseThemeColor } from "@/Hooks/UseThemeColor";
 import React, { use, useState } from "react";
-import { ActivityIndicator, FlatList, Image, View } from "react-native";
+import { ActivityIndicator, Dimensions, FlatList, Image, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { SortButton } from "@/components/SortButton";
@@ -15,6 +15,16 @@ import { RootView } from "@/components/RootView";
 
 export default function Index() {
   const colors=UseThemeColor()
+  const yScreen=Dimensions.get("window").height;
+  const xScreen=Dimensions.get("window").width;
+
+  const heightCard=120
+  const widthCard=120
+  const numColumn=Math.floor(xScreen/widthCard)
+  const [headerHeight, setHeaderHeight] = useState(0); // <-- pour stocker hauteur des 2 rows
+  const numLigne=Math.ceil((yScreen-headerHeight)/(heightCard))
+  const firstPokemonLoad=numLigne*(numColumn+1)
+  const paddingWidth=(xScreen-(numColumn*widthCard))/(numColumn+1)
   //Api pas les id
   //const {data,isFetching}=UseFetchQuery("/pokemon?limit=45")
   //const pokemons=data?.results ?? [];
@@ -22,7 +32,7 @@ export default function Index() {
   //Utilisation de UseInfiniteFetchQuery pour charger les pokémons
   //On utilise une page de 21 pokémons
   //On utilise la fonction getNextPageParam pour charger la page suivante
-  const {data,isFetching,fetchNextPage}=UseInfiniteFetchQuery("/pokemon?limit=21");
+  const {data,isFetching,fetchNextPage}=UseInfiniteFetchQuery("/pokemon",firstPokemonLoad);
   const pokemons=data?.pages.flatMap(page=>page.results.map(
     r=>({name:r.name,id:getPokemonId(r.url),url:r.url})
   )) ?? [];
@@ -41,9 +51,18 @@ const cleanSearch = search.trim().toLowerCase();
     pokemon.id.toString().includes(cleanSearch)
       ): pokemons
    )].sort((a,b)=>(a[sortKey]<b[sortKey] ? -1 :1 ))
+
+   //Si la zone de recherche n'a pas l'id ou le nom du pokemon on recherche directement 
+
+   
   return (
     <RootView style={{backgroundColor:colors.tint}}>
-      <Row 
+      <View
+       onLayout={(e) => {
+          setHeaderHeight(e.nativeEvent.layout.height);
+        }}
+      >
+        <Row 
           gap={16}
           style={styles.header}
         >
@@ -54,13 +73,15 @@ const cleanSearch = search.trim().toLowerCase();
         <SearchBar valeur={search} onChange={setSearch}></SearchBar>
         <SortButton value={sortKey} onChange={setSortKey}></SortButton>
       </Row>
-      <Card style={styles.body} >
+      </View>
+      
+      <Card style={[styles.body,{paddingHorizontal:0}]} >
         <FlatList 
         data={filteredPokemons}
-        numColumns={3}
+        numColumns={numColumn}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={[styles.list,styles.gridGap]}
-        columnWrapperStyle={[styles.gridGap]}
+        contentContainerStyle={[{padding:paddingWidth},{gap:paddingWidth}]}
+        columnWrapperStyle={[{justifyContent: 'space-between'}]}
         //Component en fin liste pour afficher un indicateur de chargement
         ListFooterComponent={
           isFetching ? <ActivityIndicator size="large" color={colors.tint} /> : null
@@ -71,7 +92,7 @@ const cleanSearch = search.trim().toLowerCase();
           <PokemonCard 
           id={item.id} 
           name={item.name} 
-          style={{flex:1/3}}
+          style={{flex:1/numColumn}}
           >
             {/* Element qui n'attends pas d'enfant */}
             {/* <Image source={{uri: item.image}} style={{width: 50, height: 50}} /> */}
@@ -105,40 +126,9 @@ const styles = {
     padding:12,
   },
   gridGap:{
-    gap: 8,
+    gap: 12,
   },
   form:{
     paddingHorizontal: 12,
   }
 }
-
-
-/*style={{
-        backgroundColor: "gray",
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}*/
-// Uncomment the following line if you want to use StyleSheetList
-// import { StyleSheetList } from "react-native";
-
-// Uncomment the following line if you want to use StyleSheetList
-// import { StyleSheetList } from "react-native";
-
-// Uncomment the following line if you want to use StyleSheetList
-// import { StyleSheetList } from "react-native";
-
-// Uncomment the following line if you want to use StyleSheetList
-// import { StyleSheetList } from "react-native";
-
-// Uncomment the following line if you want to use StyleSheetList
-// import { StyleSheetList } from "react-native";
-
-// Uncomment the following line if you want to use StyleSheetList
-// import { StyleSheetList } from "react-native";
-
-// Uncomment the following line if you want to use StyleSheetList
-// import { StyleSheetList } from "react-native";
-
-// Uncomment the following line if you want to use StyleSheetList
-// import { StyleSheetList } from "react-native"; 

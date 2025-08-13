@@ -19,10 +19,12 @@ export default function PokemonPage() {
   const params=useLocalSearchParams() as {id:string};
   const {data:pokemon}=UseFetchQuery("/pokemon/[id]",{id:params.id})
   const {data:species}=UseFetchQuery("/pokemon-species/[id]",{id:params.id})
+  const {data:countPokemon}=UseFetchQuery("/pokemon")
 
   const mainType=pokemon?.types?.[0].type.name;
   const colorType=mainType ? Colors.type[mainType] : colors.tint;
   const types=pokemon?.types ?? [];
+  const numberPokemon=countPokemon?.count;
   const bio=species?.flavor_text_entries
   ?.find(({language})=> language.name==="en")
   ?.flavor_text.replaceAll("\n",",")
@@ -38,6 +40,21 @@ export default function PokemonPage() {
     },{shouldPlay:true })//Precharger le son
     sound.playAsync()
   }
+
+
+  const onPrevious=(()=>{
+      router.replace(
+        {pathname:'/pokemon/[id]',params:{ id:Math.max(
+          parseInt(params.id)-1,1)}}
+      )
+  })
+
+  const onNext=(()=>{
+    router.replace(
+        {pathname:'/pokemon/[id]',params:{ id:Math.min(
+          numberPokemon??150,parseInt(params.id)+1)}}
+      )
+  })
   return (
     <RootView backgroundColor={colorType} >
       <View>
@@ -63,7 +80,6 @@ export default function PokemonPage() {
             <ThemeText variant="subtitle2" color="grayWhite" >#{params.id.padStart(3,'0')}</ThemeText >
         </Row>  
       </View>
-      <View style={styles.body} >
          {/* <Animated.Image style={{
                 ...styles.artwork,
                 top:top  }    
@@ -72,9 +88,18 @@ export default function PokemonPage() {
               height={200}
               width={200}
           /> */}
-          <Row style={[styles.imageRow]}>
-            <Pressable onPress={onImagePress}>
 
+          
+          <Card style={styles.card}>
+            <Row style={[styles.imageRow]}>
+            {parseInt(params.id)==1 ?<View></View>:
+            < Pressable onPress={onPrevious}>
+                <Image
+                source={require('@/assets/images/chevron_left_white.png')}
+                width={24} height={24}
+                />
+            </Pressable>}
+            <Pressable onPress={onImagePress}>
               <Image style={styles.artwork}
                 source={{uri:getPokemonArtWork(params.id)}}
                 height={200}
@@ -82,9 +107,15 @@ export default function PokemonPage() {
               />
             </Pressable>
 
+             {parseInt(params.id)==numberPokemon ? <View></View>:
+             <Pressable onPress={onNext}>
+              <Image
+                source={require('@/assets/images/chevron_right_white.png')}
+                width={24} height={24}
+                />
+            </Pressable>}
+
           </Row>
-          
-          <Card style={styles.card}>
               <Row gap={16}>
                 {types.map(
                   (t)=><PokemonType
@@ -145,7 +176,6 @@ export default function PokemonPage() {
                     /> */}
               </View>     
           </Card>
-      </View>
     </RootView>
   );
 }   
@@ -163,7 +193,11 @@ const styles=StyleSheet.create({
     imageRow:{
       position:'absolute',
       top:-144,
-      zIndex:2
+      zIndex:2,
+      justifyContent:"space-between",
+      left:0,
+      right:0,
+      paddingHorizontal:20
     },
     artwork:{
       alignSelf:"center" as const,
@@ -173,9 +207,7 @@ const styles=StyleSheet.create({
       paddingTop:60,
       gap:16,
       alignItems:"center",
-      paddingBottom:20
+      paddingBottom:20,
+      marginTop:144
     },
-    body:{
-      marginTop:144,
-    }
 });
