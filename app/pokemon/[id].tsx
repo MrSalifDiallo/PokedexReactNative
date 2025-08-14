@@ -1,30 +1,153 @@
+import { Card } from "@/components/Card";
+import { PokemonSpec } from "@/components/pokemon/PokemonSpec";
+import { PokemonStat } from "@/components/pokemon/PokemonStat";
+import { PokemonType } from "@/components/pokemon/PokemonType";
 import { RootView } from "@/components/RootView";
 import { Row } from "@/components/Row";
 import { ThemeText } from "@/components/ThemeText";
-import { UseFetchQuery } from "@/Hooks/UseFetchQuery";
-import { UseThemeColor } from "@/Hooks/UseThemeColor";
-import { router, useLocalSearchParams } from "expo-router";
-import { View,Text,StyleSheet,Image, Pressable } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { basePokemonStat, formatSize, formatWeight, getPokemonArtWork } from "@/functions/pokemon";
-import { Card } from "@/components/Card";
-import { PokemonType } from "@/components/pokemon/PokemonType";
-import { PokemonSpec } from "@/components/pokemon/PokemonSpec";
-import { PokemonStat } from "@/components/pokemon/PokemonStat";
-import { useSharedValue} from "react-native-reanimated";
-import {Audio} from 'expo-av'
-export default function PokemonPage() {
+import { UseFetchQuery } from "@/Hooks/UseFetchQuery";
+import { UseThemeColor } from "@/Hooks/UseThemeColor";
+import { Audio } from 'expo-av';
+import { router, useLocalSearchParams } from "expo-router";
+import { useRef, useState } from "react";
+import { Image, Platform, Pressable, StyleSheet, View } from "react-native";
+import PagerView from "react-native-pager-view";
+import { useSharedValue } from "react-native-reanimated";
+export default function Pokemon(){
+  const params=useLocalSearchParams() as {id:string};
+  const [id,setId]=useState(parseInt(params.id,10))
+  const offset=useRef(1);
+  const pager=useRef<PagerView>(null)
+  
+// Détection plateforme
+  const isIOS = Platform.OS === "ios";
+const onPreviousIOS=(()=>{
+        router.replace(
+          {pathname:'/pokemon/[id]',params:{ id:Math.max(
+            (id)-1,1)}}
+        )
+    }
+  )
+
+  const onNextIOS=(()=>{
+    router.replace(
+        {pathname:'/pokemon/[id]',params:{ id:Math.min(
+          1302,(id)+1)}}
+      )
+  })
+    // Tu peux aussi faire une version différente du PagerView si besoin
+  if (isIOS) {
+    // Version alternative pour iOS, par exemple désactiver certaines fonctions, ou afficher un fallback
+    return (
+        <PokemonPage
+          key={id}
+          id={id}
+          onNext={onNextIOS}
+          onPrevious={onPreviousIOS}
+        />
+    );
+  }
+
+
+
+  const onPageScrollStateChanged=(e: { nativeEvent: { pageScrollState: "idle" | "dragging" | "settling"; }; })=>{
+    if (e.nativeEvent.pageScrollState==="idle" && offset.current!==0) {
+      setId(id+offset.current);
+      offset.current=0;
+      pager.current?.setPageWithoutAnimation(1)
+    }
+  }
+
+
+  const onPrevious=(()=>{
+  if (id <= 1) return; // bloque navigation à gauche si on est à 1
+    pager.current?.setPage(0);
+  }
+  )
+
+    const onNext=(()=>{
+    if (id >= 1302) return; // bloque navigation à droite si on est au max
+    pager.current?.setPage(2);  
+
+  })
+
+  const onPageSelected=(e: { nativeEvent: { position: number; }; })=>{
+      const pos = e.nativeEvent.position;
+      if (pos === 0 && id === 1) {
+        pager.current?.setPageWithoutAnimation(1);
+        offset.current = 0;
+        return;
+      }
+
+      if (pos === 2  && id === 1302) {
+        pager.current?.setPageWithoutAnimation(1);
+        offset.current = 0;
+        return;
+      }
+
+      offset.current = pos - 1;
+  }
+  
+  return (
+  <PagerView
+    ref={pager}
+    initialPage={1}
+    style={{ flex: 1 }}
+    onPageSelected={onPageSelected}
+    onPageScrollStateChanged={onPageScrollStateChanged}
+  >
+    {id === 1 ? (
+      <View key="empty-left" />
+    ) : (
+      <PokemonPage
+        key={id - 1}
+        id={id - 1}
+        onNext={onNext}
+        onPrevious={onPrevious}
+      />
+    )}
+
+    <PokemonPage
+      key={id}
+      id={id}
+      onNext={onNext}
+      onPrevious={onPrevious}
+    />
+
+    {id === 1302 ? (
+      <View key="empty-right" />
+    ) : (
+      <PokemonPage
+        key={id + 1}
+        id={id + 1}
+        onNext={onNext}
+        onPrevious={onPrevious}
+      />
+    )}
+  </PagerView>
+)
+}
+
+type Props={
+  onPrevious:()=>void,
+  onNext:()=>void,
+
+}
+
+export function PokemonPage({ id, onPrevious, onNext }: { id: number } & Props) {
     // This is a placeholder for the Pokemon page
   const colors=UseThemeColor()
   const params=useLocalSearchParams() as {id:string};
-  const {data:pokemon}=UseFetchQuery("/pokemon/[id]",{id:params.id})
-  const {data:species}=UseFetchQuery("/pokemon-species/[id]",{id:params.id})
+  const {data:pokemon}=UseFetchQuery("/pokemon/[id]",{id:id})
+  const {data:species}=UseFetchQuery("/pokemon-species/[id]",{id:id})
   const {data:countPokemon}=UseFetchQuery("/pokemon")
-
+  const numberPokemon=countPokemon?.count;
+  const idPokemon=id
   const mainType=pokemon?.types?.[0].type.name;
   const colorType=mainType ? Colors.type[mainType] : colors.tint;
   const types=pokemon?.types ?? [];
-  const numberPokemon=countPokemon?.count;
   const bio=species?.flavor_text_entries
   ?.find(({language})=> language.name==="en")
   ?.flavor_text.replaceAll("\n",",")
@@ -42,19 +165,21 @@ export default function PokemonPage() {
   }
 
 
-  const onPrevious=(()=>{
+  /*const onPreviousIOS=(()=>{
       router.replace(
         {pathname:'/pokemon/[id]',params:{ id:Math.max(
-          parseInt(params.id)-1,1)}}
+          (id)-1,1)}}
       )
-  })
+  }
+)
 
-  const onNext=(()=>{
+  const onNextIOS=(()=>{
     router.replace(
         {pathname:'/pokemon/[id]',params:{ id:Math.min(
-          numberPokemon??150,parseInt(params.id)+1)}}
+          numberPokemon??150,(id)+1)}}
       )
-  })
+  })*/
+
   return (
     <RootView backgroundColor={colorType} >
       <View>
@@ -72,19 +197,19 @@ export default function PokemonPage() {
             </Row>
           </Pressable>  
           {/* <Pressable onPress={()=>{top.value=-144}}>
-              <ThemeText variant="subtitle2" color="grayWhite" >#{params.id.padStart(3,'0')}</ThemeText >
+              <ThemeText variant="subtitle2" color="grayWhite" >#{id.padStart(3,'0')}</ThemeText >
             </Pressable>      */}
             {/* <Pressable onPress={()=>{top.value=withSpring(-144)}}>
-              <ThemeText variant="subtitle2" color="grayWhite" >#{params.id.padStart(3,'0')}</ThemeText >
+              <ThemeText variant="subtitle2" color="grayWhite" >#{id.padStart(3,'0')}</ThemeText >
             </Pressable>   */}
-            <ThemeText variant="subtitle2" color="grayWhite" >#{params.id.padStart(3,'0')}</ThemeText >
+            <ThemeText variant="subtitle2" color="grayWhite" >#{id.toString().padStart( 3,'0')}</ThemeText >
         </Row>  
       </View>
          {/* <Animated.Image style={{
                 ...styles.artwork,
                 top:top  }    
               }
-              source={{uri:getPokemonArtWork(params.id)}}
+              source={{uri:getPokemonArtWork(id)}}
               height={200}
               width={200}
           /> */}
@@ -92,7 +217,7 @@ export default function PokemonPage() {
           
           <Card style={styles.card}>
             <Row style={[styles.imageRow]}>
-            {parseInt(params.id)==1 ?<View></View>:
+            {(id)==1 ?<View></View>:
             < Pressable onPress={onPrevious}>
                 <Image
                 source={require('@/assets/images/chevron_left_white.png')}
@@ -101,13 +226,13 @@ export default function PokemonPage() {
             </Pressable>}
             <Pressable onPress={onImagePress}>
               <Image style={styles.artwork}
-                source={{uri:getPokemonArtWork(params.id)}}
+                source={{uri:getPokemonArtWork(id)}}
                 height={200}
                 width={200}
               />
             </Pressable>
 
-             {parseInt(params.id)==numberPokemon ? <View></View>:
+             {(id)==numberPokemon ? <View></View>:
              <Pressable onPress={onNext}>
               <Image
                 source={require('@/assets/images/chevron_right_white.png')}
