@@ -150,7 +150,7 @@ PokedexReactNative/
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/your-username/PokedexReactNative.git
+git clone https://github.com/MrSalifDiallo/PokedexReactNative.git
 cd PokedexReactNative
 ```
 
@@ -402,7 +402,7 @@ PokedexReactNative/
 
 1. **Cloner le dépôt**
 ```bash
-git clone https://github.com/your-username/PokedexReactNative.git
+git clone https://github.com/MrSalifDiallo/PokedexReactNative.git
 cd PokedexReactNative
 ```
 
