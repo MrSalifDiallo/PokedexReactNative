@@ -29,7 +29,7 @@ A modern **Pokédex mobile application** built with **React Native** and **Expo*
   
 | Main Pokemon List | Alternative List View | Search Functionality |
 |:-----------------:|:---------------------:|:--------------------:|
-| ![Pokemon List](Screen/Pages/ListePokemon.png) | ![Pokemon List 2](Screen/Pages/ListePokemon2.png) | ![Search Pokemon](Screen/Pages/SearchPokemon.png) |
+| ![Pokemon List](./Screen/Pages/ListePokemon.png) | ![Pokemon List 2](./Screen/Pages/ListePokemon2.png) | ![Search Pokemon](./Screen/Pages/SearchPokemon.png) |
 
 </div>
 
@@ -38,7 +38,7 @@ A modern **Pokédex mobile application** built with **React Native** and **Expo*
 
 | Charmander #004 | Pikachu #025 | Arbok #024 | Abra #063 |
 |:---------------:|:------------:|:----------:|:---------:|
-| ![Pokemon #004](Screen/Pages/Pokemon%23004.png) | ![Pokemon #025](Screen/Pages/Pokemon%23025.png) | ![Pokemon #024](Screen/Pages/Pokemon%23024.png) | ![Pokemon #063](Screen/Pages/Pokemon%23063.png) |
+| ![Pokemon #004](./Screen/Pages/Pokemon%23004.png) | ![Pokemon #025](./Screen/Pages/Pokemon%23025.png) | ![Pokemon #024](./Screen/Pages/Pokemon%23024.png) | ![Pokemon #063](./Screen/Pages/Pokemon%23063.png) |
 
 </div>
 
@@ -46,7 +46,7 @@ A modern **Pokédex mobile application** built with **React Native** and **Expo*
 
 <div align="center">
   <video width="300" controls>
-    <source src="Screen/Videos/PokemonSound.mp4" type="video/mp4">
+    <source src="./Screen/Videos/PokemonSound.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
 </div>
