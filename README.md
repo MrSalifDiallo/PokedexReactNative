@@ -38,7 +38,7 @@ A modern **Pokédex mobile application** built with **React Native** and **Expo*
 
 | Charmander #004 | Pikachu #025 | Arbok #024 | Abra #063 |
 |:---------------:|:------------:|:----------:|:---------:|
-| ![Pokemon #004](./Screen/Pages/Pokemon%23004.png) | ![Pokemon #025](./Screen/Pages/Pokemon%23025.png) | ![Pokemon #024](./Screen/Pages/Pokemon%23024.png) | ![Pokemon #063](./Screen/Pages/Pokemon%23063.png) |
+| ![Pokemon #004](./Screen/Pages/Pokemon#004.png) | ![Pokemon #025](./Screen/Pages/Pokemon#025.png) | ![Pokemon #024](./Screen/Pages/Pokemon#024.png) | ![Pokemon #063](./Screen/Pages/Pokemon#063.png) |
 
 </div>
 
