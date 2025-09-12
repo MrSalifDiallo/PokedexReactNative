@@ -12,7 +12,7 @@ type Props = {
     name: string,
 }
 
-export function PokemonCard({style,id,name,...rest}:Props){
+export function  PokemonCard({style,id,name,...rest}:Props){
     const colors=UseThemeColor()
     return (
     <Link href={{pathname:"/pokemon/[id]",params:{id:id}}} asChild>

@@ -23,7 +23,7 @@ export default function Pokemon(){
   
 // Détection plateforme
   const isIOS = Platform.OS === "ios";
-const onPreviousIOS=(()=>{
+  const onPreviousIOS=(()=>{
         router.replace(
           {pathname:'/pokemon/[id]',params:{ id:Math.max(
             (id)-1,1)}}
@@ -139,12 +139,10 @@ type Props={
 export function PokemonPage({ id, onPrevious, onNext }: { id: number } & Props) {
     // This is a placeholder for the Pokemon page
   const colors=UseThemeColor()
-  const params=useLocalSearchParams() as {id:string};
   const {data:pokemon}=UseFetchQuery("/pokemon/[id]",{id:id})
   const {data:species}=UseFetchQuery("/pokemon-species/[id]",{id:id})
   const {data:countPokemon}=UseFetchQuery("/pokemon")
   const numberPokemon=countPokemon?.count;
-  const idPokemon=id
   const mainType=pokemon?.types?.[0].type.name;
   const colorType=mainType ? Colors.type[mainType] : colors.tint;
   const types=pokemon?.types ?? [];
@@ -196,12 +194,6 @@ export function PokemonPage({ id, onPrevious, onNext }: { id: number } & Props) 
                 <ThemeText style={{textTransform:"capitalize"}} variant="headline" color="grayWhite" >{pokemon?.name}</ThemeText >
             </Row>
           </Pressable>  
-          {/* <Pressable onPress={()=>{top.value=-144}}>
-              <ThemeText variant="subtitle2" color="grayWhite" >#{id.padStart(3,'0')}</ThemeText >
-            </Pressable>      */}
-            {/* <Pressable onPress={()=>{top.value=withSpring(-144)}}>
-              <ThemeText variant="subtitle2" color="grayWhite" >#{id.padStart(3,'0')}</ThemeText >
-            </Pressable>   */}
             <ThemeText variant="subtitle2" color="grayWhite" >#{id.toString().padStart( 3,'0')}</ThemeText >
         </Row>  
       </View>
@@ -289,16 +281,6 @@ export function PokemonPage({ id, onPrevious, onNext }: { id: number } & Props) 
                    <PokemonStat name={stat.stat.name} key={stat.stat.name} value={stat.base_stat}color={colorType}
                    />
                 )}
-                  {/* <PokemonStat name={"Lif"} value={90}color={colorType}
-                    />
-                    <PokemonStat name={"Lif"} value={180}color={colorType}
-                    />
-                    <PokemonStat name={"Lif"} value={25}color={colorType}
-                    />
-                    <PokemonStat name={"Lif"} value={75}color={colorType}
-                    />
-                    <PokemonStat name={"Lif"} value={100}color={colorType}
-                    /> */}
               </View>     
           </Card>
     </RootView>
