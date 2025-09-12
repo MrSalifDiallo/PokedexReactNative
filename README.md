@@ -29,7 +29,7 @@ A modern **Pokédex mobile application** built with **React Native** and **Expo*
   
 | Main Pokemon List | Alternative List View | Search Functionality |
 |:-----------------:|:---------------------:|:--------------------:|
-| ![Pokemon List](Screen/Pages/ListePokemon.png) | ![Pokemon List 2](Screen/Pages/ListePokemon2.png) | ![Search Pokemon](Screen/Pages/SearchPokemon.png) |
+| ![Pokemon List](./Screen/Pages/ListePokemon.png) | ![Pokemon List 2](./Screen/Pages/ListePokemon2.png) | ![Search Pokemon](./Screen/Pages/SearchPokemon.png) |
 
 </div>
 
@@ -38,7 +38,7 @@ A modern **Pokédex mobile application** built with **React Native** and **Expo*
 
 | Charmander #004 | Pikachu #025 | Arbok #024 | Abra #063 |
 |:---------------:|:------------:|:----------:|:---------:|
-| ![Pokemon #004](Screen/Pages/Pokemon004.png) | ![Pokemon #025](Screen/Pages/Pokemon025.png) | ![Pokemon #024](Screen/Pages/Pokemon024.png) | ![Pokemon #063](Screen/Pages/Pokemon063.png) |
+| ![Pokemon #004](./Screen/Pages/Pokemon004.png) | ![Pokemon #025](./Screen/Pages/Pokemon#25.png) | ![Pokemon #024](./Screen/Pages/Pokemon024.png) | ![Pokemon #063](./Screen/Pages/Pokemon063.png) |
 
 </div>
 
@@ -46,7 +46,7 @@ A modern **Pokédex mobile application** built with **React Native** and **Expo*
 
 <div align="center">
   <video width="300" controls>
-    <source src="Screen/Videos/PokemonSound.mp4" type="video/mp4">
+    <source src="./Screen/Videos/PokemonSound.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
 </div>
@@ -150,7 +150,7 @@ PokedexReactNative/
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/your-username/PokedexReactNative.git
+git clone https://github.com/MrSalifDiallo/PokedexReactNative.git
 cd PokedexReactNative
 ```
 
@@ -249,8 +249,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-**MrSalifDiallo**
+**Salif Diallo**
 - GitHub: [@MrSalifDiallo](https://github.com/MrSalifDiallo)
+- LinkedIn: [Salif Diallo](https://www.linkedin.com/in/salif-diallo-152650313/)
+- Mail: [salifdiallo@esp.sn](mailto:salifdiallo@esp.sn)
 
 ---
 
@@ -400,7 +402,7 @@ PokedexReactNative/
 
 1. **Cloner le dépôt**
 ```bash
-git clone https://github.com/your-username/PokedexReactNative.git
+git clone https://github.com/MrSalifDiallo/PokedexReactNative.git
 cd PokedexReactNative
 ```
 
@@ -499,8 +501,10 @@ Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de
 
 ## 👨‍💻 Auteur
 
-**MrSalifDiallo**
+**Salif Diallo**
 - GitHub: [@MrSalifDiallo](https://github.com/MrSalifDiallo)
+- LinkedIn: [Salif Diallo](https://www.linkedin.com/in/salif-diallo-152650313/)
+- Mail: [salifdiallo@esp.sn](mailto:salifdiallo@esp.sn)
 
 ---
 
