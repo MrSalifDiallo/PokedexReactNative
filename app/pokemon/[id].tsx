@@ -15,129 +15,13 @@ import { useRef, useState } from "react";
 import { Image, Platform, Pressable, StyleSheet, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { useSharedValue } from "react-native-reanimated";
-export default function Pokemon(){
-  const params=useLocalSearchParams() as {id:string};
-  const [id,setId]=useState(parseInt(params.id,10))
-  const offset=useRef(1);
-  const pager=useRef<PagerView>(null)
-  
-// Détection plateforme
-  const isIOS = Platform.OS === "ios";
-  const onPreviousIOS=(()=>{
-        router.replace(
-          {pathname:'/pokemon/[id]',params:{ id:Math.max(
-            (id)-1,1)}}
-        )
-    }
-  )
-
-  const onNextIOS=(()=>{
-    router.replace(
-        {pathname:'/pokemon/[id]',params:{ id:Math.min(
-          1302,(id)+1)}}
-      )
-  })
-    // Tu peux aussi faire une version différente du PagerView si besoin
-  if (isIOS) {
-    // Version alternative pour iOS, par exemple désactiver certaines fonctions, ou afficher un fallback
-    return (
-        <PokemonPage
-          key={id}
-          id={id}
-          onNext={onNextIOS}
-          onPrevious={onPreviousIOS}
-        />
-    );
-  }
-
-
-
-  const onPageScrollStateChanged=(e: { nativeEvent: { pageScrollState: "idle" | "dragging" | "settling"; }; })=>{
-    if (e.nativeEvent.pageScrollState==="idle" && offset.current!==0) {
-      setId(id+offset.current);
-      offset.current=0;
-      pager.current?.setPageWithoutAnimation(1)
-    }
-  }
-
-
-  const onPrevious=(()=>{
-  if (id <= 1) return; // bloque navigation à gauche si on est à 1
-    pager.current?.setPage(0);
-  }
-  )
-
-    const onNext=(()=>{
-    if (id >= 1302) return; // bloque navigation à droite si on est au max
-    pager.current?.setPage(2);  
-
-  })
-
-  const onPageSelected=(e: { nativeEvent: { position: number; }; })=>{
-      const pos = e.nativeEvent.position;
-      if (pos === 0 && id === 1) {
-        pager.current?.setPageWithoutAnimation(1);
-        offset.current = 0;
-        return;
-      }
-
-      if (pos === 2  && id === 1302) {
-        pager.current?.setPageWithoutAnimation(1);
-        offset.current = 0;
-        return;
-      }
-
-      offset.current = pos - 1;
-  }
-  
-  return (
-  <PagerView
-    ref={pager}
-    initialPage={1}
-    style={{ flex: 1 }}
-    onPageSelected={onPageSelected}
-    onPageScrollStateChanged={onPageScrollStateChanged}
-  >
-    {id === 1 ? (
-      <View key="empty-left" />
-    ) : (
-      <PokemonPage
-        key={id - 1}
-        id={id - 1}
-        onNext={onNext}
-        onPrevious={onPrevious}
-      />
-    )}
-
-    <PokemonPage
-      key={id}
-      id={id}
-      onNext={onNext}
-      onPrevious={onPrevious}
-    />
-
-    {id === 1302 ? (
-      <View key="empty-right" />
-    ) : (
-      <PokemonPage
-        key={id + 1}
-        id={id + 1}
-        onNext={onNext}
-        onPrevious={onPrevious}
-      />
-    )}
-  </PagerView>
-)
-}
 
 type Props={
   onPrevious:()=>void,
   onNext:()=>void,
-
 }
 
-export function PokemonPage({ id, onPrevious, onNext }: { id: number } & Props) {
-    // This is a placeholder for the Pokemon page
+function PokemonPage({ id, onPrevious, onNext }: { id: number } & Props) {
   const colors=UseThemeColor()
   const {data:pokemon}=UseFetchQuery("/pokemon/[id]",{id:id})
   const {data:species}=UseFetchQuery("/pokemon-species/[id]",{id:id})
@@ -158,25 +42,9 @@ export function PokemonPage({ id, onPrevious, onNext }: { id: number } & Props) 
     }
     const {sound}= await Audio.Sound.createAsync({
       uri:cry
-    },{shouldPlay:true })//Precharger le son
+    },{shouldPlay:true })
     sound.playAsync()
   }
-
-
-  /*const onPreviousIOS=(()=>{
-      router.replace(
-        {pathname:'/pokemon/[id]',params:{ id:Math.max(
-          (id)-1,1)}}
-      )
-  }
-)
-
-  const onNextIOS=(()=>{
-    router.replace(
-        {pathname:'/pokemon/[id]',params:{ id:Math.min(
-          numberPokemon??150,(id)+1)}}
-      )
-  })*/
 
   return (
     <RootView backgroundColor={colorType} >
@@ -197,16 +65,6 @@ export function PokemonPage({ id, onPrevious, onNext }: { id: number } & Props) 
             <ThemeText variant="subtitle2" color="grayWhite" >#{id.toString().padStart( 3,'0')}</ThemeText >
         </Row>  
       </View>
-         {/* <Animated.Image style={{
-                ...styles.artwork,
-                top:top  }    
-              }
-              source={{uri:getPokemonArtWork(id)}}
-              height={200}
-              width={200}
-          /> */}
-
-          
           <Card style={styles.card}>
             <Row style={[styles.imageRow]}>
             {(id)==1 ?<View></View>:
@@ -285,7 +143,119 @@ export function PokemonPage({ id, onPrevious, onNext }: { id: number } & Props) 
           </Card>
     </RootView>
   );
-}   
+}
+
+export default function Pokemon(){
+  const params=useLocalSearchParams() as {id:string};
+  const [id,setId]=useState(parseInt(params.id,10))
+  const offset=useRef(1);
+  const pager=useRef<PagerView>(null)
+  
+  // Détection plateforme
+  const isIOS = Platform.OS === "ios";
+  const onPreviousIOS=(()=>{
+        router.replace(
+          {pathname:'/pokemon/[id]',params:{ id:Math.max(
+            (id)-1,1)}}
+        )
+    }
+  )
+
+  const onNextIOS=(()=>{
+    router.replace(
+        {pathname:'/pokemon/[id]',params:{ id:Math.min(
+          1302,(id)+1)}}
+      )
+  })
+
+  if (isIOS) {
+    // Version alternative pour iOS, par exemple désactiver certaines fonctions, ou afficher un fallback
+    return (
+        <PokemonPage
+          key={id}
+          id={id}
+          onNext={onNextIOS}
+          onPrevious={onPreviousIOS}
+        />
+    );
+  }
+
+  const onPageScrollStateChanged=(e: { nativeEvent: { pageScrollState: "idle" | "dragging" | "settling"; }; })=>{
+    if (e.nativeEvent.pageScrollState==="idle" && offset.current!==0) {
+      setId(id+offset.current);
+      offset.current=0;
+      pager.current?.setPageWithoutAnimation(1)
+    }
+  }
+
+  const onPrevious=(()=>{
+  if (id <= 1) return; // bloque navigation à gauche si on est à 1
+    pager.current?.setPage(0);
+  }
+  )
+
+    const onNext=(()=>{
+    if (id >= 1302) return; // bloque navigation à droite si on est au max
+    pager.current?.setPage(2);  
+
+  })
+
+  const onPageSelected=(e: { nativeEvent: { position: number; }; })=>{
+      const pos = e.nativeEvent.position;
+      if (pos === 0 && id === 1) {
+        pager.current?.setPageWithoutAnimation(1);
+        offset.current = 0;
+        return;
+      }
+
+      if (pos === 2  && id === 1302) {
+        pager.current?.setPageWithoutAnimation(1);
+        offset.current = 0;
+        return;
+      }
+
+      offset.current = pos - 1;
+  }
+  
+  return (
+  <PagerView
+    ref={pager}
+    initialPage={1}
+    style={{ flex: 1 }}
+    onPageSelected={onPageSelected}
+    onPageScrollStateChanged={onPageScrollStateChanged}
+  >
+    {id === 1 ? (
+      <View key="empty-left" />
+    ) : (
+      <PokemonPage
+        key={id - 1}
+        id={id - 1}
+        onNext={onNext}
+        onPrevious={onPrevious}
+      />
+    )}
+
+    <PokemonPage
+      key={id}
+      id={id}
+      onNext={onNext}
+      onPrevious={onPrevious}
+    />
+
+    {id === 1302 ? (
+      <View key="empty-right" />
+    ) : (
+      <PokemonPage
+        key={id + 1}
+        id={id + 1}
+        onNext={onNext}
+        onPrevious={onPrevious}
+      />
+    )}
+  </PagerView>
+)
+}
 
 const styles=StyleSheet.create({
     header: {

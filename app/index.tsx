@@ -4,14 +4,13 @@ import { Row } from "@/components/Row";
 import { SearchBar } from "@/components/SearchBar";
 import { ThemeText } from "@/components/ThemeText";
 import { getPokemonId } from "@/functions/pokemon";
-import { UseFetchQuery, UseInfiniteFetchQuery } from "@/Hooks/UseFetchQuery";
+import { UseInfiniteFetchQuery } from "@/Hooks/UseFetchQuery";
 import { UseThemeColor } from "@/Hooks/UseThemeColor";
-import React, { use, useState } from "react";
-import { ActivityIndicator, Dimensions, FlatList, Image, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useState } from "react";
+import { ActivityIndicator, Dimensions, FlatList, Image, StyleSheet, View } from "react-native";
 
-import { SortButton } from "@/components/SortButton";
 import { RootView } from "@/components/RootView";
+import { SortButton } from "@/components/SortButton";
 
 export default function Index() {
   const colors=UseThemeColor()
@@ -81,7 +80,7 @@ const cleanSearch = search.trim().toLowerCase();
         numColumns={numColumn}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={[{padding:paddingWidth},{gap:paddingWidth}]}
-        columnWrapperStyle={[{justifyContent: 'space-between'}]}
+        columnWrapperStyle={[{justifyContent: 'space-around'}]}
         //Component en fin liste pour afficher un indicateur de chargement
         ListFooterComponent={
           isFetching ? <ActivityIndicator size="large" color={colors.tint} /> : null
@@ -106,7 +105,7 @@ const cleanSearch = search.trim().toLowerCase();
 }
 
 
-const styles = {
+const styles = StyleSheet.create({
   //Implementer dans RootView.tsx
   /*container: {
     flex: 1,
@@ -131,4 +130,4 @@ const styles = {
   form:{
     paddingHorizontal: 12,
   }
-}
+});
