@@ -80,7 +80,7 @@ const cleanSearch = search.trim().toLowerCase();
         numColumns={numColumn}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={[{padding:paddingWidth},{gap:paddingWidth}]}
-        columnWrapperStyle={[{justifyContent: 'space-around'}]}
+        columnWrapperStyle={[{alignItems:'flex-start',paddingHorizontal:"auto"}]}
         //Component en fin liste pour afficher un indicateur de chargement
         ListFooterComponent={
           isFetching ? <ActivityIndicator size="large" color={colors.tint} /> : null
